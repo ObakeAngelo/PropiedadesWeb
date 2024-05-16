@@ -191,9 +191,8 @@ class Propiedad(models.Model):
     nro_bannos = models.IntegerField()
     precio_tasacion = models.IntegerField()
     direccion_propiedad = models.CharField(max_length=100)
-    rut_arrendatario = models.ForeignKey(Arrendatario, on_delete=CASCADE)
     rut_empresa = models.ForeignKey(EmpresaCorredora, on_delete=CASCADE)
-    id_propiedad = models.ForeignKey(Historial_propiedad, on_delete=CASCADE)
+    
 
     def __str__(self):
         return f"{self.id_propiedad}"
