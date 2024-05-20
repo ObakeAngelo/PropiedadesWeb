@@ -3,9 +3,15 @@ from .forms import frmRegistro, frmLogin
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-
+from django.views.generic import ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.messages.views import SuccessMessageMixin 
+from django import forms
+from .models import Propiedad
 # Create your views here.
 
+
+from django.urls import reverse
 def home(request):
     return render(request, 'core/home.html')
 
@@ -53,3 +59,46 @@ def iniciar_sesion(request):
 def cerrar_sesion(request):
     logout(request)
     return redirect('home')
+
+class ListarPropiedad(ListView): 
+    model = Propiedad
+    template_name = 'propiedad/mostrar.html'
+
+class CrearPropiedad(SuccessMessageMixin, CreateView): 
+    model = Propiedad # Llamamos a la clase 'Propiedad' que se encuentra en nuestro archivo 'models.py'
+    form = Propiedad # Definimos nuestro formulario con el nombre de la clase o modelo 'Propiedad'
+    fields = "__all__" # Le decimos a Django que muestre todos los campos de la tabla 'Propiedad' de nuestra Base de Datos 
+    template_name = 'propiedad/agregar.html'
+    success_message = 'Propiedad Ingresada Correctamente !' # Mostramos este Mensaje luego de Crear una propiedad
+    def get_success_url(self):        
+        return reverse('home') # Redireccionamos a la vista principal 'leer'
+    def form_valid(self, form):
+        messages.success(self.request, "Propiedad creada exitosamente.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error al crear la propiedad.")
+        return super().form_invalid(form)
+
+class ActualizarPropiedad(SuccessMessageMixin, UpdateView): 
+    model = Propiedad # Llamamos a la clase 'Propiedad' que se encuentra en nuestro archivo 'models.py' 
+    form = Propiedad # Definimos nuestro formulario con el nombre de la clase o modelo 'Propiedad' 
+    fields = "__all__" # Le decimos a Django que muestre todos los campos de la tabla 'Propiedad' de nuestra Base de Datos 
+    success_message = 'Propiedad Actualizada Correctamente !' # Mostramos este Mensaje luego de Editar una propiedad 
+ 
+    # Redireccionamos a la página principal luego de actualizar una propiedad 
+    def get_success_url(self):               
+        return reverse('leer') # Redireccionamos a la vista principal 'leer'
+ 
+
+class EliminarPropiedad(SuccessMessageMixin, DeleteView): 
+    model = Propiedad 
+    form = Propiedad
+    fields = "__all__"     
+
+    # Redireccionamos a la página principal luego de eliminar una propiedad
+    def get_success_url(self): 
+        success_message = 'Propiedad Eliminada Correctamente !' # Mostramos este Mensaje luego de eliminar
+        messages.success (self.request, (success_message))       
+        return reverse('leer') # Redireccionamos a la vista principal 'leer'
+    
