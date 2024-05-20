@@ -110,7 +110,7 @@ class Contrato(models.Model):
         return f"{self.id_contrato}"
     
 class Cuenta_bancaria(models.Model):
-    id_cuenta = models.IntegerField(primary_key=True)
+    id_cuenta = models.AutoField(primary_key=True)
     alias = models.CharField(max_length=50)
     banco = models.CharField(max_length=50)
     tipo_cuenta = models.CharField(max_length=50)
@@ -122,7 +122,7 @@ class Cuenta_bancaria(models.Model):
         return f"{self.id_cuenta}"
     
 class Egreso_bancario(models.Model):
-    id_egreso = models.IntegerField(primary_key=True)
+    id_egreso = models.AutoField(primary_key=True)
     fecha_egreso = models.DateField()
     egreso = models.IntegerField()
     tipo_egreso = models.CharField(max_length=150)
@@ -132,7 +132,7 @@ class Egreso_bancario(models.Model):
         return f"{self.id_egreso}"
     
 class Ingreso_bancario(models.Model):
-    id_ingreso = models.IntegerField(primary_key=True)
+    id_ingreso = models.AutoField(primary_key=True)
     fecha_ingreso = models.DateField()
     monto_ingreso = models.IntegerField()
     tipo_ingreso = models.CharField(max_length=150)
@@ -142,7 +142,7 @@ class Ingreso_bancario(models.Model):
         return f"{self.id_ingreso}" 
     
 class Historial_arriendo(models.Model):
-    id_arriendo = models.IntegerField(primary_key=True)
+    id_arriendo = models.AutoField(primary_key=True)
     fecha_arriendo = models.DateField()
     valor = models.IntegerField()
     fecha = models.DateField()
@@ -152,7 +152,7 @@ class Historial_arriendo(models.Model):
         return f"{self.id_arriendo}"
     
 class Historial_propiedad(models.Model):
-    id_propiedad = models.IntegerField(primary_key=True)
+    id_propiedad = models.AutoField(primary_key=True)
     nombre_propietario = models.CharField(max_length=100)
     fecha_venta = models.DateField()
     antiguo_propietario = models.CharField(max_length=100)
@@ -161,7 +161,7 @@ class Historial_propiedad(models.Model):
         return f"{self.id_propiedad}"
     
 class Historial_venta(models.Model):
-    id_venta = models.IntegerField(primary_key=True)
+    id_venta = models.AutoField(primary_key=True)
     nombre_propietario = models.CharField(max_length=100)
     fecha_venta = models.DateField()
 
@@ -169,7 +169,7 @@ class Historial_venta(models.Model):
         return f"{self.id_venta}"
 
 class Cierre_Operacion(models.Model):
-    id_cierre = models.IntegerField(primary_key=True)
+    id_cierre = models.AutoField(primary_key=True)
     voucher = models.FileField()
     escritura_propiedad = models.FileField()
     id_venta = models.ForeignKey(Historial_venta, on_delete= CASCADE)
@@ -179,7 +179,7 @@ class Cierre_Operacion(models.Model):
         return f"{self.id_cierre}"
     
 class Propiedad(models.Model):
-    id_propiedad = models.IntegerField(primary_key=True)
+    id_propiedad = models.AutoField(primary_key=True)
     numero_rol = models.IntegerField()
     tipo_propiedad = models.CharField(max_length=50)
     tipo_operacion = models.CharField(max_length=50)
