@@ -1,4 +1,7 @@
+
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 from .views import ListarPropiedad, CrearPropiedad, EliminarPropiedad, ActualizarPropiedad
 urlpatterns = [
@@ -10,4 +13,4 @@ urlpatterns = [
     path('agregar/', CrearPropiedad.as_view(), name='agregar'),
     path('eliminar/<int:pk>/', EliminarPropiedad.as_view(), name='eliminar_propiedad'),
     path('actualizar/<int:pk>/', ActualizarPropiedad.as_view(), name='actualizar_propiedad')
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

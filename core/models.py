@@ -183,7 +183,7 @@ class Propiedad(models.Model):
     numero_rol = models.IntegerField()
     tipo_propiedad = models.CharField(max_length=50)
     tipo_operacion = models.CharField(max_length=50)
-    titulo = models.CharField(max_length=50)
+    titulo = models.FileField(upload_to='pdfs/', null=True, blank=True)
     estado = models.BooleanField()
     descripcion_propiedad = models.TextField(default="", null=True, blank=True)
     metros_cuadrados = models.IntegerField()

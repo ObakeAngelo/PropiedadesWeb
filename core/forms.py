@@ -26,6 +26,8 @@ class CrearPropiedadForm(forms.ModelForm):
             'precio_tasacion', 'direccion_propiedad', 'rut_empresa'
         ]
 
+        
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
