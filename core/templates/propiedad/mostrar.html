@@ -1,6 +1,8 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% load humanize %}
 {% block title %}Página de Inicio{% endblock %}
+
 
 {% block content %}
 <div class="pccp mt-5 mb-3" align="center">
@@ -55,7 +57,7 @@
             <td>{{ Propiedad.numero_rol }}</td>
             <td>{{ Propiedad.tipo_propiedad }}</td>
             <td>{{ Propiedad.tipo_operacion}}</td>
-            <td>{{ Propiedad.metros_cuadrados}}</td>
+            <td>{{ Propiedad.metros_cuadrados|intcomma}}  m²</td>
             <td>
               
               <form method="POST" action="{% url 'eliminar_propiedad' Propiedad.pk %}">
@@ -63,7 +65,7 @@
                 {% csrf_token %}
                 
                 <div class="btn-group">
-                  <a href="detalle/{{jugo.id}}" title="Ver" type="button" class="btn btn-success">Ver </a>
+                  <a href="{% url 'detalle' Propiedad.pk %}" title="Ver" type="button" class="btn btn-success">Ver </a>
                   <a href="{% url 'actualizar_propiedad' Propiedad.pk %}" title="Editar" type="button" class="btn btn-primary">Editar </a>
                   <button class="btn btn-danger" onclick="return eliminar();" type="submit">
                     Eliminar

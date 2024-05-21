@@ -3,10 +3,11 @@ from .forms import ActualizarPropiedadForm, CrearPropiedadForm, frmRegistro, frm
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.messages.views import SuccessMessageMixin 
 from django import forms
+from django.http import FileResponse
 from .models import Propiedad
 # Create your views here.
 
@@ -64,6 +65,12 @@ class ListarPropiedad(ListView):
     model = Propiedad
     template_name = 'propiedad/mostrar.html'
 
+class DetallePropiedad(DetailView): 
+    model = Propiedad
+    template_name = 'propiedad/detalle.html' # Llamamos a la clase 'Jugos' que se encuentra en nuestro archivo 'models.py'
+
+
+
 class CrearPropiedad(SuccessMessageMixin, CreateView): 
     model = Propiedad # Llamamos a la clase 'Propiedad' que se encuentra en nuestro archivo 'models.py'
     form_class = CrearPropiedadForm # Definimos nuestro formulario con el nombre de la clase o modelo 'Propiedad'
@@ -101,4 +108,10 @@ class EliminarPropiedad(SuccessMessageMixin, DeleteView):
         success_message = 'Propiedad Eliminada Correctamente !' # Mostramos este Mensaje luego de eliminar
         messages.success (self.request, (success_message))       
         return reverse('mostrar') # Redireccionamos a la vista principal 'leer'
-    
+
+
+def descargar_pdf(request, pk):
+    propiedad = get_object_or_404(Propiedad, pk=pk)
+    response = FileResponse(propiedad.titulo.open('rb'), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{propiedad.titulo.name}"'
+    return response

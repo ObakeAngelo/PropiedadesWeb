@@ -1,0 +1,64 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}Página de Inicio{% endblock %}
+
+{% block content %}
+
+<main role="main">
+
+    <div class="container text-center mt-5">
+
+      <div class="row mb-4">
+        <div class="col-md-12">
+          <h1 style="font-size: 28px;">Detalles Propiedades</h1>              
+        </div>
+      </div>          
+
+          <div class="table-responsive">
+
+            <nav aria-label="breadcrumb mb-3">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url "mostrar" %}">Propiedades</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Detalles</a></li>
+                        </ol>
+                    </nav>
+
+            <div class="formulario" align="left">
+
+                <h4>Detalles</h4>
+
+                        <p><span class="txt_negrita">Numero Rol:</span><br>{{object.numero_rol}}</p>
+                        <p><span class="txt_negrita">Tipo Propiedad:</span><br>{{object.tipo_propiedad}} </p>
+                        <p><span class="txt_negrita">Tipo Operacion:</span> <br>{{object.tipo_operacion}} </p>
+                        <p><span class="txt_negrita">Titulo:</span> <br> <a href="{% url 'descargar_pdf' object.pk %}" >Titulo Propiedad</a></p>
+                        <p><span class="txt_negrita">Estado:</span> <br>{{object.estado_display}} </p>
+                        <p><span class="txt_negrita">Descripcion:</span> <br>{{object.Descripcion}}</p>
+                        <p><span class="txt_negrita">Metros Cuadraros:</span> <br>{{object.metros_cuadrados|intcomma}}  m²</p>
+                        <p><span class="txt_negrita">Nro Habitaciones:</span> <br>{{object.nro_habitaciones}}</p>
+                        <p><span class="txt_negrita">Numero Baños:</span> <br>{{object.nro_bannos}} </p>
+                        <p><span class="txt_negrita">Precio de Tasasion:</span> <br>$ {{object.precio_tasacion|floatformat:"-2"|intcomma}}</p>
+                        <p><span class="txt_negrita">Direccion:</span> <br>{{object.direccion_propiedad}}</p>
+                       
+
+              <a href="{% url "mostrar" %}" type="submit" class="btn btn-primary">Volver</a>
+
+            </div>
+            
+          </div>
+
+        </div>
+
+      </div>          
+
+      <hr>
+
+
+      
+    </div>
+
+</main>
+
+
+
+{% endblock %}

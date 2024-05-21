@@ -193,6 +193,8 @@ class Propiedad(models.Model):
     direccion_propiedad = models.CharField(max_length=100)
     rut_empresa = models.ForeignKey(EmpresaCorredora, on_delete=CASCADE)
     
+    def estado_display(self):
+        return "Nuevo" if self.estado else "Usado"
 
     def __str__(self):
         return f"{self.id_propiedad}"
