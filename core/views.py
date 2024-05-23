@@ -7,8 +7,13 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.messages.views import SuccessMessageMixin 
 from django import forms
-from django.http import FileResponse
+from django.http import FileResponse, JsonResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 from .models import Propiedad
+from django.contrib.auth.decorators import login_required
+from django.views import View
+
 # Create your views here.
 
 
@@ -61,57 +66,66 @@ def cerrar_sesion(request):
     logout(request)
     return redirect('home')
 
-class ListarPropiedad(ListView): 
-    model = Propiedad
-    template_name = 'propiedad/mostrar.html'
 
-class DetallePropiedad(DetailView): 
-    model = Propiedad
-    template_name = 'propiedad/detalle.html' # Llamamos a la clase 'Jugos' que se encuentra en nuestro archivo 'models.py'
+@login_required
+def listar_propiedades(request):
+    propiedades = Propiedad.objects.all().order_by('-id')
+    contexto = {}
+    form = CrearPropiedadForm()
 
+    default_page = 1
+    page = request.GET.get('page', default_page)
+    query = request.GET.get('q')
 
+    if query:
+        propiedades = propiedades.filter(
+            Q(numero_rol__icontains=query) |
+            Q(tipo_propiedad__icontains=query) |
+            Q(tipo_operacion__icontains=query) |
+            Q(metros_cuadrados__icontains=query) |
+            Q(precio_tasacion__icontains=query)
+        )
 
-class CrearPropiedad(SuccessMessageMixin, CreateView): 
-    model = Propiedad # Llamamos a la clase 'Propiedad' que se encuentra en nuestro archivo 'models.py'
-    form_class = CrearPropiedadForm # Definimos nuestro formulario con el nombre de la clase o modelo 'Propiedad'
-    # Le decimos a Django que muestre todos los campos de la tabla 'Propiedad' de nuestra Base de Datos 
-    template_name = 'propiedad/agregar.html'
-    success_message = 'Propiedad Ingresada Correctamente !' # Mostramos este Mensaje luego de Crear una propiedad
-    def get_success_url(self):        
-        return reverse('mostrar') # Redireccionamos a la vista principal 'leer'
-    def form_valid(self, form):
-        messages.success(self.request, "Propiedad creada exitosamente.")
-        return super().form_valid(form)
+    items_per_page = 5
+    paginator = Paginator(propiedades, items_per_page)
 
-    def form_invalid(self, form):
-        messages.error(self.request, "Error al crear la propiedad.")
-        return super().form_invalid(form)
+    try:
+        propiedades = paginator.page(page)
+    except PageNotAnInteger:
+        propiedades = paginator.page(default_page)
+    except EmptyPage:
+        propiedades = paginator.page(paginator.num_pages)
 
-class ActualizarPropiedad(SuccessMessageMixin, UpdateView): 
-    model = Propiedad # Llamamos a la clase 'Propiedad' que se encuentra en nuestro archivo 'models.py' 
-    form_class = ActualizarPropiedadForm # Definimos nuestro formulario con el nombre de la clase o modelo 'Propiedad' 
-   # Le decimos a Django que muestre todos los campos de la tabla 'Propiedad' de nuestra Base de Datos 
-    success_message = 'Propiedad Actualizada Correctamente !' # Mostramos este Mensaje luego de Editar una propiedad 
-    template_name = 'propiedad/actualizar.html'
-    # Redireccionamos a la página principal luego de actualizar una propiedad 
-    def get_success_url(self):               
-        return reverse('mostrar') # Redireccionamos a la vista principal 'leer'
- 
-
-class EliminarPropiedad(SuccessMessageMixin, DeleteView): 
-    model = Propiedad 
-    form = Propiedad
-    fields = "__all__"     
-
-    # Redireccionamos a la página principal luego de eliminar una propiedad
-    def get_success_url(self): 
-        success_message = 'Propiedad Eliminada Correctamente !' # Mostramos este Mensaje luego de eliminar
-        messages.success (self.request, (success_message))       
-        return reverse('mostrar') # Redireccionamos a la vista principal 'leer'
+    contexto["propiedades"] = propiedades
+    contexto["form"] = form
+    return render(request, 'propiedad/mostrar.html', contexto)
 
 
-def descargar_pdf(request, pk):
+def crear_propiedad(request):
+    if request.method == 'POST':
+        form = CrearPropiedadForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'message': 'Propiedad agregada correctamente'})
+    else:
+        form = CrearPropiedadForm()
+    return render(request, 'propiedad/mostrar.html', {'form': form})
+
+
+def actualizar_propiedad(request, pk):
     propiedad = get_object_or_404(Propiedad, pk=pk)
-    response = FileResponse(propiedad.titulo.open('rb'), content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="{propiedad.titulo.name}"'
-    return response
+    if request.method == 'POST':
+        form = ActualizarPropiedadForm(request.POST, instance=propiedad)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'message': 'Propiedad actualizada correctamente'})
+    return JsonResponse({'error': 'Formulario no válido'})
+    
+
+
+def eliminar_propiedad(request, pk):
+    propiedad = get_object_or_404(Propiedad, pk=pk)
+    if request.method == 'POST':
+        propiedad.delete()
+        return JsonResponse({'message': 'Propiedad eliminada correctamente'})
+    return JsonResponse({'error': 'Método no permitido'}, status=405)

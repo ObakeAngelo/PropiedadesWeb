@@ -179,7 +179,6 @@ class Cierre_Operacion(models.Model):
         return f"{self.id_cierre}"
     
 class Propiedad(models.Model):
-    id_propiedad = models.AutoField(primary_key=True)
     numero_rol = models.IntegerField()
     tipo_propiedad = models.CharField(max_length=50)
     tipo_operacion = models.CharField(max_length=50)

@@ -3,6 +3,7 @@ from .models import EmpresaCorredora, Propiedad
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from crispy_forms.layout import Layout, Field, ButtonHolder
 
 
 class frmRegistro(UserCreationForm):
@@ -26,26 +27,22 @@ class CrearPropiedadForm(forms.ModelForm):
             'precio_tasacion', 'direccion_propiedad', 'rut_empresa'
         ]
 
+   
+
         
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-        self.helper.add_input(Submit('submit', 'Crear Propiedad'))
+
 
 
 class ActualizarPropiedadForm(forms.ModelForm):
     class Meta:
         model = Propiedad
         fields = [
-            'numero_rol', 'tipo_propiedad', 'tipo_operacion', 'titulo', 'estado',
+            'numero_rol', 'tipo_propiedad', 'tipo_operacion', 'estado',
             'descripcion_propiedad', 'metros_cuadrados', 'nro_habitaciones', 'nro_bannos',
             'precio_tasacion', 'direccion_propiedad', 'rut_empresa'
         ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-        self.helper.add_input(Submit('submit', 'Actualizar Propiedad'))
+        
+
+    
